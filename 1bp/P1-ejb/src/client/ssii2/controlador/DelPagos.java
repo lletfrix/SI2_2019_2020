@@ -24,7 +24,7 @@ import javax.xml.ws.WebServiceRef;
 
 /* Acceso al EJB local */
 import javax.ejb.EJB;
-import ssii2.visa.visaDAOLocal;
+import ssii2.visa.VisaDAOLocal;
 
 
 
@@ -52,7 +52,7 @@ public class DelPagos extends ServletRaiz {
     /**
      * Atributo que permite acceder al EJB Local
      */
-    @EJB(name="VisaDAOBean", beanInterface="VisaDAOLocal.class")
+    @EJB(name="VisaDAOBean", beanInterface=VisaDAOLocal.class)
     private VisaDAOLocal dao;
 
 

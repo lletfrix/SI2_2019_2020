@@ -318,7 +318,7 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
         PreparedStatement pstmt = null;
         Connection pcon = null;
         ResultSet rs = null;
-        // PagoBean[] ret = null;
+        PagoBean[] ret = null;
         ArrayList<PagoBean> pagos = null;
         String qry = null;
 
@@ -353,8 +353,8 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
                 pagos.add(p);
             }
 
-            // ret = new PagoBean[pagos.size()];
-            // ret = pagos.toArray(ret);
+            ret = new PagoBean[pagos.size()];
+            ret = pagos.toArray(ret);
 
             // Cerramos / devolvemos la conexion al pool
             pcon.close();
@@ -378,7 +378,7 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
         }
 
         // return ret;
-        return pagos;
+        return ret;
     }
 
     // Borrar los pagos asociados a un comercio
@@ -468,7 +468,6 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
     /**
      * @param debug the debug to set
      */
-    @WebMethod(exclude = true)
     public void setDebug(String debug) {
         this.debug = (debug.equals("true"));
     }
