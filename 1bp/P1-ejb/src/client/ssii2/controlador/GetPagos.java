@@ -22,10 +22,13 @@ import ssii2.visa.PagoBean;
 // import ssii2.visa.dao.VisaDAO;
 
 // imports para acceder al WS remoto
-import ssii2.visa.VisaDAOWSService;
-import ssii2.visa.VisaDAOWS;
 import javax.xml.ws.WebServiceRef;
-import javax.xml.ws.BindingProvider;
+
+/* Acceso al EJB local */
+import javax.ejb.EJB;
+import ssii2.visa.visaDAOLocal;
+
+
 /**
  *
  * @author phaya
@@ -47,6 +50,13 @@ public class GetPagos extends ServletRaiz {
      */
     public final static String ATTR_PAGOS = "pagos";
 
+
+    /**
+     * Atributo que permite acceder al EJB Local
+     */
+    @EJB(name="VisaDAOBean", beanInterface="VisaDAOLocal.class")
+    private VisaDAOLocal dao;
+
     /**
     * Procesa una petici&oacute;n HTTP tanto <code>GET</code> como <code>POST</code>.
     * @param request objeto de petici&oacute;n
@@ -54,34 +64,11 @@ public class GetPagos extends ServletRaiz {
     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        VisaDAOWSService service = null;
-        VisaDAOWS dao = null;
-        BindingProvider bp = null;
-
-        try {
-            service = new VisaDAOWSService();
-            dao = service.getVisaDAOWSPort();
-
-            bp = (BindingProvider) dao;
-            bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getServletContext().getInitParameter("pathVisaWS"));
-        } catch (Exception e) {
-            enviaError(e, request, response);
-            return;
-        }
-		// VisaDAO dao = new VisaDAO();
-
 		/* Se recoge de la petici&oacute;n el par&aacute;metro idComercio*/
 		String idComercio = request.getParameter(PARAM_ID_COMERCIO);
 
 		/* Petici&oacute;n de los pagos para el comercio */
-        List<PagoBean> pagosRet = dao.getPagos(idComercio);
-        ArrayList<PagoBean> pagos = new ArrayList<PagoBean>(pagosRet);
-		// ArrayList<PagoBean> pagos = dao.getPagos(idComercio);
-
-        /* Casting a PagoBean[] para la vista .jsp */
-        PagoBean[] pagosArr = null;
-        pagosArr = new PagoBean[pagos.size()];
-        pagosArr = pagos.toArray(pagosArr);
+        PagoBean[] pagosArr = dao.getPagos(idComercio);
 
         request.setAttribute(ATTR_PAGOS, pagosArr);
         reenvia("/listapagos.jsp", request, response);

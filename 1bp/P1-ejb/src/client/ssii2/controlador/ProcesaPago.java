@@ -47,10 +47,11 @@ import ssii2.visa.*;
 // import ssii2.visa.dao.VisaDAO;
 
 /* Imports para instaciar un stub */
-import ssii2.visa.VisaDAOWSService;
-import ssii2.visa.VisaDAOWS;
 import javax.xml.ws.WebServiceRef;
-import javax.xml.ws.BindingProvider;
+
+/* Acceso al EJB local */
+import javax.ejb.EJB;
+import ssii2.visa.visaDAOLocal;
 
 /**
  *
@@ -111,6 +112,12 @@ public class ProcesaPago extends ServletRaiz {
      */
     public final static String ATTR_PAGO = "pago";
 
+    /**
+     * Atributo que permite acceder al EJB Local
+     */
+    @EJB(name="VisaDAOBean", beanInterface="VisaDAOLocal.class")
+    private VisaDAOLocal dao;
+
   private static void displayInterfaceInformation(
          NetworkInterface netint) throws SocketException {
        System.out.printf(
@@ -154,21 +161,6 @@ private void printAddresses(HttpServletRequest request, HttpServletResponse resp
             return;
         }
 
-        VisaDAOWSService service = null;
-        VisaDAOWS dao = null;
-        BindingProvider bp = null;
-
-        try {
-            service = new VisaDAOWSService();
-            dao = service.getVisaDAOWSPort();
-
-            bp = (BindingProvider) dao;
-            bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getServletContext().getInitParameter("pathVisaWS"));
-        } catch (Exception e) {
-            enviaError(e, request, response);
-            return;
-        }
-		// VisaDAO dao = new VisaDAO();
 		HttpSession sesion = request.getSession(false);
 		if (sesion != null) {
 			pago = (PagoBean) sesion.getAttribute(ComienzaPago.ATTR_PAGO);
