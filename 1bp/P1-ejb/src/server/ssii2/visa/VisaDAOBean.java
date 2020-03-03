@@ -20,16 +20,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-/* Imports para transformar la clase en un webService */
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebService;
+/* Imports para transformar la clase en un EJB */
+import javax.ejb.Stateless;
 
 
 /**
  * @author jaime
  */
-public class VisaDAOBean extends DBTester {
+@Stateless(mappedName="VisaDAOBean")
+public class VisaDAOBean extends DBTester implements VisaDAOLocal {
 
     private boolean debug = false;
 
@@ -77,15 +76,6 @@ public class VisaDAOBean extends DBTester {
                     " where idTransaccion = ?" +
                     " and idComercio = ?";
     /**************************************************/
-
-
-    /**
-     * Constructor de la clase
-     */
-    public VisaDAOBean() {
-        return;
-    }
-
 
     /**
      *  getQryCompruebaTarjeta
@@ -323,7 +313,7 @@ public class VisaDAOBean extends DBTester {
      * @param idComercio
      * @return
      */
-    public ArrayList<PagoBean> getPagos(  String idComercio) {
+    public PagoBean[] getPagos(  String idComercio) {
 
         PreparedStatement pstmt = null;
         Connection pcon = null;
