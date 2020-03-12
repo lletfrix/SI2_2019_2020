@@ -48,7 +48,7 @@ public class VisaCancelacionJMSBean extends DBTester implements MessageListener 
   // la actualización
   public void onMessage(Message inMessage) {
       PreparedStatement pstmt = null;
-      Connection pcon = null;
+      Connection con = null;
       ResultSet rs = null;
       boolean retStatus;
       TextMessage msg = null;
@@ -82,10 +82,11 @@ public class VisaCancelacionJMSBean extends DBTester implements MessageListener 
       } catch (JMSException e) {
           e.printStackTrace();
           mdc.setRollbackOnly();
-      } catch (Throwable te) {
-          te.printStackTrace();
       } catch (SQLException se) {
           logger.warning(se.getMessage());
+          se.printStackTrace();
+      } catch (Throwable te) {
+          te.printStackTrace();
       }
   }
 
