@@ -29,10 +29,14 @@ public class VisaCancelacionJMSBean extends DBTester implements MessageListener 
   @Resource
   private MessageDrivenContext mdc;
 
-  private static final String UPDATE_CANCELA_QRY = null;
-   // TODO : Definir UPDATE sobre la tabla pagos para poner
-   // codRespuesta a 999 dado un código de autorización
+  private static final String UPDATE_CANCELA_QRY =
+                        "update pago set codrespuesta=999 "+
+                        "where idautorizacion=?";
 
+  private static final String UPDATE_SALDO_QRY =
+                        "update tarjeta set saldo = saldo + pago.importe "+
+                        "from pago where pago.idautorizacion=? and " +
+                        "tarjeta.numerotarjeta=pago.numerotarjeta";
 
   public VisaCancelacionJMSBean() {
   }
@@ -43,12 +47,33 @@ public class VisaCancelacionJMSBean extends DBTester implements MessageListener 
   // Para ello conecte a la BD, prepareStatement() y ejecute correctamente
   // la actualización
   public void onMessage(Message inMessage) {
+      PreparedStatement pstmt = null;
+      Connection pcon = null;
+      ResultSet rs = null;
+      boolean retStatus;
       TextMessage msg = null;
 
       try {
           if (inMessage instanceof TextMessage) {
               msg = (TextMessage) inMessage;
               logger.info("MESSAGE BEAN: Message received: " + msg.getText());
+              int idAutorizacion = Integer.parseInt(msg.getText());
+
+              con = getConnection();
+              String cancela = UPDATE_CANCELA_QRY;
+              pstmt = con.prepareStatement(cancela);
+              pstmt.setInt(1, idAutorizacion);
+              if(!(!pstmt.execute() &&  pstmt.getUpdateCount() == 1)){
+                  logger.warning("Error while cancelling query");
+              }
+
+              String update = UPDATE_SALDO_QRY;
+              pstmt = con.prepareStatement(update);
+              pstmt.setInt(1, idAutorizacion);
+              if(!(!pstmt.execute() &&  pstmt.getUpdateCount() == 1)){
+                  logger.warning("Error while updating cash");
+              }
+
           } else {
               logger.warning(
                       "Message of wrong type: "
@@ -59,6 +84,8 @@ public class VisaCancelacionJMSBean extends DBTester implements MessageListener 
           mdc.setRollbackOnly();
       } catch (Throwable te) {
           te.printStackTrace();
+      } catch (SQLException se) {
+          logger.warning(se.getMessage());
       }
   }
 
