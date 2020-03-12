@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 /* Imports para transformar la clase en un EJB */
 import javax.ejb.Stateless;
+import javax.ejb.EJBException;
 
 
 /**
@@ -75,6 +76,15 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
                     " from pago " +
                     " where idTransaccion = ?" +
                     " and idComercio = ?";
+
+    private static final String SELECT_SALDO_QRY =
+                    "select saldo from tarjeta where numeroTarjeta = ?";
+
+    private static final String UPDATE_SALDO_QRY =
+                    "update tarjeta set saldo = ? where numeroTarjeta = ?";
+
+
+    private double saldo;
     /**************************************************/
 
     /**
@@ -228,18 +238,50 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
                isPrepared() == true */
             /**************************************************/
             if (isPrepared() == true) {
-               String insert  = INSERT_PAGOS_QRY;
-               errorLog(insert);
-               pstmt = con.prepareStatement(insert);
-               pstmt.setString(1, pago.getIdTransaccion());
-               pstmt.setDouble(2, pago.getImporte());
-               pstmt.setString(3, pago.getIdComercio());
-               pstmt.setString(4, pago.getTarjeta().getNumero());
-               ret = null;
-               if (!pstmt.execute()
-                       && pstmt.getUpdateCount() == 1) {
-                 ret = pago;
-               }
+
+                String select = SELECT_SALDO_QRY;
+                errorLog(select);
+                pstmt = con.prepareStatement(select);
+                pstmt.setString(1, pago.getTarjeta().getNumero());
+                ret = null;
+                if ((rs = pstmt.executeQuery()) != null
+                        && pstmt.getUpdateCount() == 1){
+                    ret = pago;
+                }
+
+                rs.next();
+                saldo = rs.getDouble("saldo");
+
+                if (saldo >= pago.getImporte()) {
+                    saldo -= pago.getImporte();
+
+                    String update = UPDATE_SALDO_QRY;
+                    errorLog(update);
+                    pstmt = con.prepareStatement(update);
+                    pstmt.setDouble(1, saldo);
+                    pstmt.setString(2, pago.getTarjeta().getNumero());
+                    ret = null;
+                    if (!pstmt.execute()
+                            && pstmt.getUpdateCount() == 1){
+                        ret = pago;
+                    }
+
+                    String insert  = INSERT_PAGOS_QRY;
+                    errorLog(insert);
+                    pstmt = con.prepareStatement(insert);
+                    pstmt.setString(1, pago.getIdTransaccion());
+                    pstmt.setDouble(2, pago.getImporte());
+                    pstmt.setString(3, pago.getIdComercio());
+                    pstmt.setString(4, pago.getTarjeta().getNumero());
+                    ret = null;
+                    if (!pstmt.execute()
+                            && pstmt.getUpdateCount() == 1) {
+                      ret = pago;
+                    }
+
+                } else {
+                    ret = null;
+                }
 
             } else {
             /**************************************************/
@@ -286,6 +328,7 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
         } catch (Exception e) {
             errorLog(e.toString());
             ret = null;
+            throw new EJBException();
         } finally {
             try {
                 if (rs != null) {
@@ -432,6 +475,14 @@ public class VisaDAOBean extends DBTester implements VisaDAOLocal {
         }
 
         return ret;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(double saldo) {
+        this.saldo = saldo;
     }
 
     /**

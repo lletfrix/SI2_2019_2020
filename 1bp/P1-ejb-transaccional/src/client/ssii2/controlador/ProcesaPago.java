@@ -52,6 +52,7 @@ import javax.xml.ws.WebServiceRef;
 /* Acceso al EJB local */
 import javax.ejb.EJB;
 import ssii2.visa.VisaDAOLocal;
+import javax.ejb.EJBException;
 
 /**
  *
@@ -183,10 +184,16 @@ private void printAddresses(HttpServletRequest request, HttpServletResponse resp
             return;
         }
 
-	if ((pago = dao.realizaPago(pago)) == null) {
+        try {
+            if ((pago = dao.realizaPago(pago)) == null) {
+                    enviaError(new Exception("Pago incorrecto"), request, response);
+                    return;
+                }
+        } catch (EJBException e) {
             enviaError(new Exception("Pago incorrecto"), request, response);
             return;
         }
+
 
         request.setAttribute(ComienzaPago.ATTR_PAGO, pago);
         if (sesion != null) sesion.invalidate();
