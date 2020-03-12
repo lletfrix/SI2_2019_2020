@@ -28,7 +28,7 @@ import javax.ejb.Stateless;
  * @author jaime
  */
 @Stateless(mappedName="VisaDAOBean")
-public class VisaDAOBean extends DBTester implements VisaDAOLocal {
+public class VisaDAOBean extends DBTester implements VisaDAORemote, VisaDAOLocal {
 
     private boolean debug = false;
 
