@@ -69,6 +69,11 @@ ant limpiar-todo
         <antcall target="desplegar-servicio" />
     </target>
 
+    <target name="replegar">
+        <antcall target="replegar-servicio" />
+        <antcall target="replegar-cliente" />
+    </target>
+
 
 	<target name="montar-jerarquia" description="crea los directorios del proyecto">
 		<mkdir dir="${build}" />
