@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-for iter in 1 250 500 750 1000 1250
+for iter in 1 250 500 750 1000 1250 1500
 do
     echo 'RUNNING ' $iter 'ITERATION!!!!'
     # Configure new test
