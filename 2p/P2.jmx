@@ -64,7 +64,7 @@
           <stringProp name="outputFormat"></stringProp>
           <boolProp name="perThread">false</boolProp>
           <stringProp name="randomSeed"></stringProp>
-          <stringProp name="variableName">import</stringProp>
+          <stringProp name="variableName">importe</stringProp>
         </RandomVariableConfig>
         <hashTree/>
         <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Contador" enabled="true">
@@ -200,7 +200,7 @@
           <stringProp name="outputFormat"></stringProp>
           <boolProp name="perThread">false</boolProp>
           <stringProp name="randomSeed"></stringProp>
-          <stringProp name="variableName">import</stringProp>
+          <stringProp name="variableName">importe</stringProp>
         </RandomVariableConfig>
         <hashTree/>
         <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Contador" enabled="true">
@@ -336,7 +336,7 @@
           <stringProp name="outputFormat"></stringProp>
           <boolProp name="perThread">false</boolProp>
           <stringProp name="randomSeed"></stringProp>
-          <stringProp name="variableName">import</stringProp>
+          <stringProp name="variableName">importe</stringProp>
         </RandomVariableConfig>
         <hashTree/>
         <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Contador" enabled="true">
