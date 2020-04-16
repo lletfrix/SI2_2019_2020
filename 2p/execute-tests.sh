@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-for iter in 1 #250 500 750 1000 1250 1500 1750 2000 2250 2500
+for iter in 1750 2000 2250 2500 #1 250 500 750 1000 1250 1500 1750 2000 2250 2500
 do
     echo 'RUNNING ' $iter 'ITERATION!!!!'
     # Configure new test
@@ -26,5 +26,5 @@ do
     ssh si2@10.1.7.2 'rm ~/cpu.txt ~/result.txt'
     ssh si2@10.1.7.1 "psql visa -U alumnodb -c 'DELETE FROM PAGO'"
     echo '###### Structuring stuff'
-    mv cpu-vm.txt cpu-host.txt monitor.txt test-results.jtl data-ex-8/$iter\u
+    mv cpu-vm.txt cpu-host.txt monitor.txt test-results.jtl data-ex-9/$iter\u
 done
