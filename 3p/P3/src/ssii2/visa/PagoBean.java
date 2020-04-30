@@ -142,7 +142,7 @@ public class PagoBean {
         return instancia;
     }
 
-    public void setInstancia(instancia){
+    public void setInstancia(String instancia){
         this.instancia = instancia;
     }
 
@@ -150,7 +150,7 @@ public class PagoBean {
         return ip;
     }
 
-    public void setIp(ip){
+    public void setIp(String ip){
         this.ip = ip;
     }
 }

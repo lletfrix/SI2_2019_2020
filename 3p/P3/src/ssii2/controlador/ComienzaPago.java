@@ -160,7 +160,11 @@ public class ComienzaPago extends ServletRaiz {
         pago.setImporte(impd);
         pago.setRutaRetorno(request.getParameter(PARAM_RUTA_RETORNO));
         pago.setInstancia(System.getProperty("com.sun.aas.instanceName"));
-        pago.setIp(java.net.InetAddress.getLocalHost().getHostAddress());
+        try {
+            pago.setIp(java.net.InetAddress.getLocalHost().getHostAddress());
+        } catch (Exception e) {
+            errorLog("Error en la obtencion de la IP");
+        }
         return pago;
     }
 
