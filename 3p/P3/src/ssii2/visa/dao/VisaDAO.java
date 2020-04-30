@@ -1,6 +1,6 @@
 /**
  * Pr&aacute;ctricas de Sistemas Inform&aacute;ticos II
- * 
+ *
  * Implementacion de la interfaz de VISA utilizando como backend
  * una base de datos.
  * Implementa dos modos de acceso (proporcionados por la clase DBTester):
@@ -63,8 +63,8 @@ public class VisaDAO extends DBTester {
 
     private static final String INSERT_PAGOS_QRY =
                     "insert into pago(" +
-                    "idTransaccion,importe,idComercio,numeroTarjeta)" +
-                    " values (?,?,?,?)";
+                    "idTransaccion,importe,idComercio,numeroTarjeta,instancia,ip)" +
+                    " values (?,?,?,?,?,?)";
 
     private static final String SELECT_PAGO_TRANSACCION_QRY =
                     "select idAutorizacion, codRespuesta " +
@@ -73,9 +73,9 @@ public class VisaDAO extends DBTester {
                     " and idComercio = ?";
     /**************************************************/
 
-    
+
     /**
-     * Constructor de la clase     
+     * Constructor de la clase
      */
     public VisaDAO() {
         return;
@@ -94,7 +94,7 @@ public class VisaDAO extends DBTester {
                     + "' and codigoVerificacion='" + tarjeta.getCodigoVerificacion() + "'";
         return qry;
     }
-    
+
     /**
      *  getQryInsertPago
      */
@@ -107,7 +107,9 @@ public class VisaDAO extends DBTester {
                     + "'" + pago.getIdTransaccion() + "',"
                     + pago.getImporte() + ","
                     + "'" + pago.getIdComercio() + "',"
-                    + "'" + pago.getTarjeta().getNumero() + "'"
+                    + "'" + pago.getTarjeta().getNumero() + "'" + "',"
+                    + "'" + pago.getInstancia() + "'" + "',"
+                    + "'" + pago.getIp() + "'"
                     + ")";
         return qry;
     }
@@ -159,7 +161,7 @@ public class VisaDAO extends DBTester {
                pstmt.setString(3, tarjeta.getFechaEmision());
                pstmt.setString(4, tarjeta.getFechaCaducidad());
                pstmt.setString(5, tarjeta.getCodigoVerificacion());
-               rs = pstmt.executeQuery();               
+               rs = pstmt.executeQuery();
 
             } else {
             /**************************************************/
@@ -169,7 +171,7 @@ public class VisaDAO extends DBTester {
             rs = stmt.executeQuery(qry);
 
             } /**********************/
-            
+
             /* Si hay siguiente registro, la tarjeta valido OK */
             ret = rs.next();
 
@@ -199,7 +201,7 @@ public class VisaDAO extends DBTester {
     }
 
     /**
-     * Realiza el pago 
+     * Realiza el pago
      * @param pago
      * @return
      */
@@ -239,13 +241,15 @@ public class VisaDAO extends DBTester {
                pstmt.setDouble(2, pago.getImporte());
                pstmt.setString(3, pago.getIdComercio());
                pstmt.setString(4, pago.getTarjeta().getNumero());
+               pstmt.setString(5, pago.getInstancia());
+               pstmt.setString(6, pago.getIp());
                ret = false;
                if (!pstmt.execute()
                        && pstmt.getUpdateCount() == 1) {
                  ret = true;
                }
 
-            } else {            
+            } else {
             /**************************************************/
             stmt = con.createStatement();
             String insert = getQryInsertPago(pago);
@@ -258,7 +262,7 @@ public class VisaDAO extends DBTester {
             }/****************/
 
             // Obtener id.autorizacion
-            if (ret) {                
+            if (ret) {
 
                 /* TODO Permitir usar prepared statement si
                  * isPrepared() = true */
@@ -276,7 +280,7 @@ public class VisaDAO extends DBTester {
                     String select = getQryBuscaPagoTransaccion(pago);
                     errorLog(select);
                     rs = stmt.executeQuery(select);
-                    
+
                 }/*************************************/
                 if (rs.next()) {
                     pago.setIdAutorizacion(String.valueOf(rs.getInt("idAutorizacion")));
